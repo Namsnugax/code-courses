@@ -302,16 +302,19 @@ function edAct(a,b){
   $('#ed-oe').oninput=e=>{const g=[...new Intl.Segmenter().segment(e.target.value)][0];if(g)pickEmo(g.segment)}}
  else if(a==='e')pickEmo(b.dataset.e);
  else if(a==='pf')$('#ed-file').click();
- else if(a==='ps'){$('#ed-panel').innerHTML=`<div class="srow"><input id="ed-sq" value="${esc(ed.name)}"><button class="pri" data-a="go" style="flex:none">Chercher</button></div><div id="ed-res"></div>`;if(ed.name)photoSearch(ed.name)}
+ else if(a==='ps'){const br=ls.get('brand');$('#ed-panel').innerHTML=`<div class="srow"><input id="ed-sq" value="${esc(ed.name)}" placeholder="Article"><button class="pri" data-a="go" style="flex:none">Chercher</button></div><div class="srow"><input id="ed-sb" value="${esc(br===null?'Carrefour':br)}" placeholder="Marque (laisser vide = aucune)"></div><div id="ed-res"></div>`;
+  ['ed-sq','ed-sb'].forEach(id=>$('#'+id).onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();photoSearch($('#ed-sq').value)}});if(ed.name)photoSearch(ed.name)}
  else if(a==='go')photoSearch($('#ed-sq').value);
  else if(a==='img'){toast('Téléchargement…');fetch(b.dataset.u).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.blob()}).then(bl=>toJpeg(URL.createObjectURL(bl),false)).then(setBlob).then(()=>toast('Image choisie')).catch(e=>toast('Image inaccessible : '+errMsg(e)))}
  else if(a==='ok')saveEditor();
  else if(a==='del'){if(!confirm('Supprimer la tuile « '+ed.name+' » ?'))return;const t=tileOf(ed.id);if(t){t.d=true;t.u=now();touch('catalog')}closeModal();render()}}
 function pickEmo(e){ed.emo=e;ed.blob=null;ed.pic=0;ed.auto=false;edPrev()}
 async function photoSearch(term){term=term.trim();if(!term)return;const el=$('#ed-res');el.innerHTML='<p class="hint">Recherche…</p>';
- const [o,w]=await Promise.allSettled([offSearch(term),wikiSearch(term)]);
+ const brand=($('#ed-sb')?$('#ed-sb').value:'').trim();ls.set('brand',brand);
+ const [o,w]=await Promise.allSettled([offSearch((term+' '+brand).trim()),wikiSearch(term)]);
  const sec=(title,r)=>r.status!=='fulfilled'?`<p class="hint">${title} : indisponible (${esc(errMsg(r.reason))})</p>`:r.value.length?`<h3 class="gh">${title}</h3><div class="rgrid">${r.value.map(x=>`<button data-a="img" data-u="${esc(x.u)}"><img src="${esc(x.u)}" alt="" loading="lazy"><span>${esc(x.t.slice(0,24))}</span></button>`).join('')}</div>`:`<p class="hint">${title} : aucun résultat</p>`;
- el.innerHTML=sec('Wikipédia',w)+sec('Open Food Facts',o)}
+ const so=sec(brand?'Open Food Facts · '+brand:'Open Food Facts',o),sw=sec('Wikipédia',w);
+ el.innerHTML=brand?so+sw:sw+so}
 async function saveEditor(){const name=ed.name.trim();if(!name)return toast('Le nom est obligatoire');
  if(tiles().some(t=>norm(t.name)===norm(name)&&t.id!==ed.id))return toast('Une tuile porte déjà ce nom');
  const id=ed.id||uid();let pic=ed.pic;
