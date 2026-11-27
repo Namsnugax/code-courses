@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#14252b">
+<link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">
+<title>Courses</title>
+<style>
+:root{--bg:#f2f5f6;--sf:#fff;--ink:#14252b;--mut:#5b6b70;--ac:#0f7b6c;--ln:#d5dde0;--bad:#b3261e;color-scheme:light dark}
+@media(prefers-color-scheme:dark){:root{--bg:#0e1a1e;--sf:#16272d;--ink:#e8eff1;--mut:#93a5ab;--ac:#3fc3ae;--ln:#2a3d44;--bad:#ff8a80}}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 system-ui,sans-serif;padding-bottom:env(safe-area-inset-bottom)}
+#top{position:sticky;top:0;z-index:5;background:var(--bg);padding-top:env(safe-area-inset-top);border-bottom:1px solid var(--ln)}
+header{display:flex;gap:8px;align-items:center;padding:10px 14px;max-width:960px;margin:0 auto}
+header h1{font-size:18px;margin:0;flex:1}
+#sync{font-size:13px;color:var(--mut);margin-left:6px}
+nav{display:flex;gap:6px;padding:0 14px 8px;max-width:960px;margin:0 auto}
+nav button{flex:1}
+nav button.on{background:var(--ac);border-color:var(--ac);color:#fff;font-weight:600}
+main{max-width:960px;margin:0 auto;padding:14px 14px 60px}
+button{font:inherit;color:inherit;background:var(--sf);border:1px solid var(--ln);border-radius:10px;padding:8px 12px;cursor:pointer}
+button.pri{background:var(--ac);border-color:var(--ac);color:#fff;font-weight:600}
+button.bad{color:var(--bad)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+input,select{font:inherit;width:100%;padding:10px;border:1px solid var(--ln);border-radius:10px;background:var(--sf);color:var(--ink)}
+label{display:block;margin:12px 0 4px;font-weight:600}
+h2{margin:0;font-size:20px}h3.gh{margin:12px 0 6px;font-size:14px;color:var(--mut);font-weight:600}
+.hint{color:var(--mut);font-size:13px;margin:8px 0 0}
+.empty{color:var(--mut);padding:12px 0}
+.srow{display:flex;gap:8px;margin-top:8px}.srow button{flex:1}
+.sec{margin-top:18px}
+.sh{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}.sh h2{flex:1}
+.sh button{padding:6px 10px;font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:8px}
+.tile{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px;min-height:92px;border-radius:12px;text-align:center;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:manipulation}
+.inlist .tile{border-color:var(--ac)}
+.tile .nm{font-size:12px;line-height:1.15;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.em{font-size:36px;line-height:44px}
+.tile img,.th img,.pv img{width:44px;height:44px;object-fit:cover;border-radius:8px;pointer-events:none}
+.tile .q{position:absolute;top:3px;right:4px;background:var(--ac);color:#fff;font-size:11px;font-weight:700;border-radius:99px;padding:0 6px}
+.tile.done{opacity:.45;filter:grayscale(1)}.tile.done .nm{text-decoration:line-through}
+.tile.free{border-style:dashed}
+#finish{width:100%;margin-top:10px}
+.row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--ln)}
+.row .th{width:44px;text-align:center;flex:none}.row .th .em{font-size:28px}
+.row .nm{flex:1;min-width:0;overflow-wrap:anywhere}.row small{display:block;color:var(--mut)}
+.row button{padding:6px 10px}
+.bar{display:flex;gap:8px;margin:10px 0}.bar button{flex:1}
+#modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:flex-end;justify-content:center;z-index:20}
+.box{background:var(--bg);width:100%;max-width:560px;max-height:92vh;overflow:auto;border-radius:16px 16px 0 0;padding:14px 14px calc(14px + env(safe-area-inset-bottom))}
+.pv{display:flex;align-items:center;gap:12px;margin-bottom:6px}.pv .em{font-size:48px;line-height:56px}.pv img{width:56px;height:56px}
+.egrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(44px,1fr));gap:4px;margin-top:8px;max-height:200px;overflow:auto}
+.egrid button{font-size:24px;padding:4px}
+.rgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:8px;margin-top:8px}
+.rgrid button{padding:4px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px}
+.rgrid img{width:72px;height:72px;object-fit:contain;background:#fff;border-radius:6px}
+.stp{display:flex;align-items:center;justify-content:center;gap:18px;margin:12px 0;font-size:22px}.stp button{width:48px;height:48px;font-size:22px}
+#toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;max-width:90%;z-index:30;display:flex;gap:12px;align-items:center}
+#toast button{background:none;border:0;color:var(--ac);font-weight:700;padding:0}
+</style></head><body>
+<div id="top">
+<header><h1>Courses<span id="sync"></span></h1><button id="reload" aria-label="Recharger">↻</button><button id="gear" aria-label="Réglages">⚙</button></header>
+<nav id="tabs"><button data-t="shop" class="on">Courses</button><button data-t="manage">Gestion</button></nav>
+</div>
+<main>
+<section id="v-shop">
+ <input id="q" placeholder="Rechercher ou ajouter un article…" enterkeyhint="done" autocomplete="off" autocapitalize="sentences">
+ <div class="srow" id="qact" hidden><button class="pri" id="q-add">+ Ajouter à la liste</button><button id="q-new">Créer une tuile</button></div>
+ <div class="sec"><div class="sh"><h2>Liste à acheter</h2><button id="sort"></button><button id="store"></button></div>
+  <div id="list" class="inlist"></div><button id="finish" class="pri" hidden></button></div>
+ <div class="sec"><div class="sh"><h2>Tuiles non utilisées</h2></div><div id="pool"></div></div>
+</section>
+<section id="v-manage" hidden></section>
+<section id="v-cfg" hidden>
+ <h2>Réglages</h2>
+ <p class="hint">Ces réglages restent uniquement dans ce navigateur (à refaire sur chaque téléphone). Jeton conseillé : « fine-grained » limité au dépôt de données, permission Contents en lecture/écriture.</p>
+ <label for="c-owner">Compte GitHub</label><input id="c-owner" autocapitalize="none" autocomplete="off">
+ <label for="c-repo">Dépôt des données (privé)</label><input id="c-repo" autocapitalize="none" autocomplete="off">
+ <label for="c-branch">Branche (vide = branche par défaut)</label><input id="c-branch" autocapitalize="none" autocomplete="off">
+ <label for="c-token">Jeton d’accès GitHub</label><input id="c-token" type="password" autocapitalize="none" autocomplete="off">
+ <div class="bar"><button id="c-back">Retour</button><button class="pri" id="c-save">Enregistrer</button></div>
+</section>
+</main>
+<div id="modal" hidden></div>
+<div id="toast" hidden></div>
+<script>
+'use strict';
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const now=()=>Date.now(),uid=()=>now().toString(36)+Math.random().toString(36).slice(2,6);
+const norm=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
+const byName=(a,b)=>norm(a.name).localeCompare(norm(b.name),'fr');
+const ls={get:k=>{try{return localStorage.getItem('c.'+k)}catch{return null}},set:(k,v)=>{try{localStorage.setItem('c.'+k,v)}catch{}}};
+const errMsg=e=>e&&e.message?e.message:String(e);
+
+/* ---- Emojis : devinette du nom -> emoji ---- */
+const EM={};
+('lait:🥛,beurre:🧈,oeuf:🥚,fromage:🧀,yaourt:🥛,creme:🥛,pain:🍞,baguette:🥖,croissant:🥐,brioche:🥐,pomme de terre:🥔,patate:🥔,pomme:🍎,poire:🍐,banane:🍌,orange:🍊,clementine:🍊,citron:🍋,fraise:🍓,framboise:🍓,raisin:🍇,cerise:🍒,peche:🍑,abricot:🍑,melon:🍈,pasteque:🍉,ananas:🍍,kiwi:🥝,mangue:🥭,avocat:🥑,tomate:🍅,carotte:🥕,oignon:🧅,ail:🧄,poivron:🫑,concombre:🥒,courgette:🥒,salade:🥬,laitue:🥬,epinard:🥬,chou:🥬,brocoli:🥦,mais:🌽,champignon:🍄,aubergine:🍆,piment:🌶️,viande:🥩,steak:🥩,boeuf:🥩,poulet:🍗,jambon:🍖,saucisse:🌭,lardon:🥓,bacon:🥓,poisson:🐟,saumon:🐟,thon:🐟,crevette:🦐,pate:🍝,spaghetti:🍝,riz:🍚,pizza:🍕,burger:🍔,frite:🍟,sandwich:🥪,chocolat:🍫,biscuit:🍪,gateau:🍰,bonbon:🍬,glace:🍦,miel:🍯,confiture:🍓,cafe:☕,the:🍵,eau:💧,jus:🧃,vin:🍷,biere:🍺,soda:🥤,cola:🥤,sel:🧂,huile:🫒,olive:🫒,noix:🥜,cacahuete:🥜,farine:🌾,sucre:🍚,cereale:🥣,muesli:🥣,papier toilette:🧻,essuie-tout:🧻,mouchoir:🧻,sopalin:🧻,savon:🧼,lessive:🧺,eponge:🧽,vaisselle:🧽,poubelle:🗑️,sac:🗑️,shampoing:🧴,gel douche:🧴,dentifrice:🪥,brosse:🪥,rasoir:🪒,couche:👶,chat:🐱,chien:🐶,croquette:🐾,pile:🔋,ampoule:💡,bougie:🕯️,fleur:💐,medicament:💊,doliprane:💊').split(',').forEach(p=>{const i=p.indexOf(':');EM[p.slice(0,i)]=p.slice(i+1)});
+const EMOJIS=[...new Set(Object.values(EM).concat(['🍞','🥫','🍜','🍱','🥗','🥞','🧁','🍩','🍿','🥧','🍳','🥘','🍲','🧃','🧊','🛒','🏠','🎁','🧴','🧼','📦']))];
+function guess(n){n=norm(n);if(!n)return'';
+ for(const k in EM)if(k.includes(' ')&&n.includes(k))return EM[k];
+ const w=n.split(/[^a-z-]+/).filter(Boolean).map(x=>x.replace(/(s|x)$/,''));
+ for(const x of w)if(EM[x])return EM[x];
+ for(const k in EM)if(k.length>4&&n.includes(k))return EM[k];return''}
+
+/* ---- Données locales + synchronisation GitHub ---- */
+const FILES={catalog:{path:'catalog.json',keys:['tiles','aisles']},list:{path:'list.json',keys:['items']}};
+const S={catalog:{tiles:[],aisles:[]},list:{items:[]}};
+const M={catalog:{sha:null,etag:null,dirty:false,busy:false,timer:null,rev:0},list:{sha:null,etag:null,dirty:false,busy:false,timer:null,rev:0}};
+for(const n in S){try{const d=JSON.parse(ls.get('d.'+n)||'null');if(d)for(const k of FILES[n].keys)S[n][k]=d[k]||[];const m=JSON.parse(ls.get('m.'+n)||'null');if(m){M[n].sha=m.sha;M[n].dirty=!!m.dirty}}catch{}}
+const cfg=()=>{try{return{owner:'Namsnugax',repo:'data-courses',...JSON.parse(ls.get('cfg')||'{}')}}catch{return{owner:'Namsnugax',repo:'data-courses'}}};
+function gh(path,o={}){const c=cfg(),get=!o.method||o.method==='GET';
+ return fetch(`https://api.github.com/repos/${encodeURIComponent(c.owner)}/${encodeURIComponent(c.repo)}/contents/${path}${get&&c.branch?'?ref='+encodeURIComponent(c.branch):''}`,
+  {cache:'no-store',...o,headers:{Authorization:'Bearer '+c.token,Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28',...o.headers}})}
+const toB64=s=>{const b=new TextEncoder().encode(s);let r='';for(let i=0;i<b.length;i+=8192)r+=String.fromCharCode(...b.subarray(i,i+8192));return btoa(r)};
+const fromB64=s=>new TextDecoder().decode(Uint8Array.from(atob(s.replace(/\n/g,'')),c=>c.charCodeAt(0)));
+function saveLocal(n){ls.set('d.'+n,JSON.stringify(S[n]));ls.set('m.'+n,JSON.stringify({sha:M[n].sha,dirty:M[n].dirty}))}
+// Fusion enregistrement par enregistrement : le plus récent (champ u) gagne. Suppression = tombstone {d:true}.
+function mergeArr(local,remote){const m=new Map();for(const r of remote)m.set(r.id,r);for(const r of local){const o=m.get(r.id);if(!o||r.u>o.u)m.set(r.id,r)}return[...m.values()]}
+function clean(n){const d=S[n],lim=now()-(n==='list'?6048e5:2592e6);
+ for(const k of FILES[n].keys)d[k]=d[k].filter(r=>!r.d||r.u>lim);
+ if(n==='list'){const seen=new Set();d.items.sort((a,b)=>a.id<b.id?-1:1);
+  for(const r of d.items){if(r.d)continue;const k=r.tid?'t'+r.tid:'n'+norm(r.name);if(seen.has(k)){r.d=true;r.u=now();M.list.dirty=true}else seen.add(k)}}}
+async function pull(n,force){const m=M[n],f=FILES[n];
+ const r=await gh(f.path,{headers:m.etag&&!force?{'If-None-Match':m.etag}:{}});
+ if(r.status===304)return;
+ if(r.status===404){m.sha=null;m.etag=null;m.dirty=true;return}
+ if(!r.ok)throw new Error(r.status===401||r.status===403?'Jeton refusé ('+r.status+')':'GitHub '+r.status);
+ const j=await r.json();m.sha=j.sha;m.etag=r.headers.get('ETag');
+ let rd={};try{rd=JSON.parse(fromB64(j.content)||'{}')}catch{}
+ for(const k of f.keys)S[n][k]=mergeArr(S[n][k],rd[k]||[]);
+ clean(n);
+ const same=f.keys.every(k=>{const rm=new Map((rd[k]||[]).map(x=>[x.id,x.u]));const l=S[n][k];return l.length===rm.size&&l.every(x=>rm.get(x.id)===x.u)});
+ if(same)m.dirty=false;
+ saveLocal(n)}
+async function push(n){const m=M[n];if(m.busy)return;m.busy=true;
+ try{for(let t=0;m.dirty&&t<6;t++){const snap=m.rev,c=cfg();
+  const r=await gh(FILES[n].path,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:'maj '+n,content:toB64(JSON.stringify(S[n])),...(m.sha?{sha:m.sha}:{}),...(c.branch?{branch:c.branch}:{})})});
+  if(r.ok){const j=await r.json();m.sha=j.content.sha;m.etag=null;if(m.rev===snap)m.dirty=false;saveLocal(n);continue}
+  if(r.status===409||r.status===422){await pull(n,true);continue}
+  throw new Error(r.status===401||r.status===403?'Jeton refusé ('+r.status+')':'GitHub '+r.status)}}
+ finally{m.busy=false}}
+function touch(n){const m=M[n];m.dirty=true;m.rev++;saveLocal(n);setSync();clearTimeout(m.timer);m.timer=setTimeout(()=>push(n).then(()=>setSync()).catch(e=>setSync(e)),1200)}
+function flush(){for(const n in M){const m=M[n];clearTimeout(m.timer);if(!m.dirty||m.busy||!cfg().token)continue;
+ const c=cfg(),body=JSON.stringify({message:'maj '+n,content:toB64(JSON.stringify(S[n])),...(m.sha?{sha:m.sha}:{}),...(c.branch?{branch:c.branch}:{})});
+ if(body.length<60000)gh(FILES[n].path,{method:'PUT',keepalive:true,headers:{'Content-Type':'application/json'},body}).catch(()=>{})}}
+let syncing=false;
+function setSync(e){const el=$('#sync');const d=M.list.dirty||M.catalog.dirty;
+ if(e instanceof Error){el.textContent='⚠';el.title=errMsg(e)}else{el.textContent=d?'⏳':'✓';el.title=d?'Synchronisation en attente':'Synchronisé'}}
+async function syncAll(manual){if(syncing||!cfg().token)return;syncing=true;
+ try{await Promise.all(Object.keys(M).map(n=>pull(n,manual)));render();await Promise.all(Object.keys(M).map(push));setSync()}
+ catch(e){setSync(e);if(manual)toast(errMsg(e))}finally{syncing=false}}
+addEventListener('visibilitychange',()=>document.hidden?flush():syncAll());
+addEventListener('pagehide',flush);addEventListener('online',()=>syncAll());
+setInterval(()=>{if(!document.hidden)syncAll()},20000);
+
+/* ---- Accès aux données ---- */
+const aisles=()=>S.catalog.aisles.filter(a=>!a.d).sort((a,b)=>(a.o||0)-(b.o||0)||(a.id<b.id?-1:1));
+const tiles=()=>S.catalog.tiles.filter(t=>!t.d);
+const items=()=>S.list.items.filter(i=>!i.d);
+const tileOf=id=>S.catalog.tiles.find(t=>t.id===id&&!t.d);
+const aisleOk=id=>id&&S.catalog.aisles.some(a=>a.id===id&&!a.d)?id:'';
+function vw(i){const t=i.tid&&tileOf(i.tid);return t?{id:t.id,name:t.name,emo:t.emo,pic:t.pic,aisle:aisleOk(t.aisle),tile:t,item:i}:{id:i.id,name:i.name,emo:'',pic:0,aisle:'',tile:null,item:i}}
+function visual(v){return v.pic?`<img data-k="${v.id}-${v.pic}" alt="">`:`<span class="em">${v.emo||"🛒"}</span>`}
+
+/* ---- Images (stockées dans data-courses/images, mises en cache) ---- */
+const blobs=new Map();
+async function loadBlob(key){const ck=location.origin+'/__img/'+key;let c=null;try{c=await caches.open('img')}catch{}
+ let r=c&&await c.match(ck);
+ if(!r){const x=await gh('images/'+key+'.jpg',{headers:{Accept:'application/vnd.github.raw+json'}});if(!x.ok)throw new Error('GitHub '+x.status);const b=await x.blob();if(c)await c.put(ck,new Response(b));r=new Response(b)}
+ return URL.createObjectURL(await r.blob())}
+function getBlob(key){if(!blobs.has(key)){const p=loadBlob(key);blobs.set(key,p);p.catch(()=>blobs.delete(key))}return blobs.get(key)}
+function hydrate(root){(root||document).querySelectorAll('img[data-k]:not([src])').forEach(im=>getBlob(im.dataset.k).then(u=>{im.src=u}).catch(()=>{const s=document.createElement('span');s.className='em';s.textContent='🖼️';im.replaceWith(s)}))}
+async function upload(key,blob){const u=new Uint8Array(await blob.arrayBuffer());let s='';for(let i=0;i<u.length;i+=8192)s+=String.fromCharCode(...u.subarray(i,i+8192));
+ const c=cfg(),r=await gh('images/'+key+'.jpg',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:'image '+key,content:btoa(s),...(c.branch?{branch:c.branch}:{})})});
+ if(!r.ok)throw new Error('GitHub '+r.status);
+ blobs.set(key,Promise.resolve(URL.createObjectURL(blob)));try{(await caches.open('img')).put(location.origin+'/__img/'+key,new Response(blob))}catch{}}
+function toJpeg(src,cover,max=200){return new Promise((res,rej)=>{const im=new Image();im.onload=()=>{
+ const W=im.naturalWidth,H=im.naturalHeight,s=cover?Math.min(W,H):Math.max(W,H),d=Math.min(max,s),c=document.createElement('canvas');c.width=c.height=d;
+ const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,d,d);
+ if(cover)x.drawImage(im,(W-s)/2,(H-s)/2,s,s,0,0,d,d);else{const k=d/s;x.drawImage(im,(d-W*k)/2,(d-H*k)/2,W*k,H*k)}
+ c.toBlob(b=>b?res(b):rej(new Error('encodage impossible')),'image/jpeg',.82)};
+ im.onerror=()=>rej(new Error('image illisible'));im.src=src})}
+async function offSearch(t){const r=await fetch('https://fr.openfoodfacts.org/cgi/search.pl?search_terms='+encodeURIComponent(t)+'&search_simple=1&action=process&json=1&page_size=12&fields=product_name,image_front_small_url');
+ const j=await r.json();return(j.products||[]).filter(p=>p.image_front_small_url).map(p=>({t:p.product_name||'',u:p.image_front_small_url}))}
+async function wikiSearch(t){const r=await fetch('https://fr.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch='+encodeURIComponent(t)+'&gsrlimit=8&prop=pageimages&piprop=thumbnail&pithumbsize=300&format=json&origin=*');
+ const j=await r.json();return Object.values(j.query?.pages||{}).filter(p=>p.thumbnail).sort((a,b)=>a.index-b.index).map(p=>({t:p.title,u:p.thumbnail.source}))}
+
+/* ---- Toast / modale ---- */
+let tt;function toast(msg,undo){const el=$('#toast');el.innerHTML=`<span>${esc(msg)}</span>`+(undo?'<button>Annuler</button>':'');el.hidden=false;
+ if(undo)el.querySelector('button').onclick=()=>{el.hidden=true;undo()};clearTimeout(tt);tt=setTimeout(()=>el.hidden=true,undo?6000:2500)}
+let modalH=null;
+function modal(html,h){$('#modal').innerHTML=`<div class="box">${html}</div>`;$('#modal').hidden=false;modalH=h}
+function closeModal(){$('#modal').hidden=true;$('#modal').innerHTML='';modalH=null}
+$('#modal').addEventListener('click',e=>{if(e.target.id==='modal')return closeModal();const b=e.target.closest('[data-a]');if(b&&modalH)modalH(b.dataset.a,b,e)});
+
+/* ---- Liste : actions + annuler ---- */
+const snap=()=>JSON.parse(JSON.stringify(S.list.items));
+function restore(prev){const t=now(),pm=new Map(prev.map(r=>[r.id,r]));
+ for(const r of S.list.items)if(!pm.has(r.id)){r.d=true;r.u=t}
+ for(const p of prev){const c=S.list.items.find(r=>r.id===p.id);if(c)Object.assign(c,p,{u:t});else S.list.items.push({...p,u:t})}
+ touch('list');render()}
+function addTile(t,silent){const prev=snap();S.list.items.push({id:uid(),tid:t.id,name:t.name,qty:1,done:false,u:now()});touch('list');render();if(!silent)toast(t.name+' ajouté',()=>restore(prev))}
+function addFree(name){name=name.trim();if(!name)return;
+ const t=tiles().find(x=>norm(x.name)===norm(name));
+ if(t){if(items().some(i=>i.tid===t.id))return toast('Déjà dans la liste');return addTile(t)}
+ if(items().some(i=>!i.tid&&norm(i.name)===norm(name)))return toast('Déjà dans la liste');
+ const prev=snap();S.list.items.push({id:uid(),name,qty:1,done:false,u:now()});touch('list');render();toast(name+' ajouté',()=>restore(prev))}
+function removeItem(id,msg){const prev=snap(),i=S.list.items.find(x=>x.id===id);if(!i)return;i.d=true;i.u=now();touch('list');render();toast(msg||'Retiré',()=>restore(prev))}
+function setItem(id,f){const i=S.list.items.find(x=>x.id===id);if(!i)return;Object.assign(i,f,{u:now()});touch('list');render()}
+
+/* ---- Rendu ---- */
+let view='shop',sortMode=ls.get('sort')||'alpha',store=ls.get('store')==='1';
+function tileBtn(v,cls){const i=v.item;return`<button class="tile ${cls||''}${i&&i.done?' done':''}${i&&!v.tile?' free':''}" data-id="${i?i.id:v.id}"><span class="vi">${visual(v)}</span><span class="nm">${esc(v.name)}</span>${i&&i.qty>1?`<span class="q">×${i.qty}</span>`:''}</button>`}
+function grouped(arr,render,doneLast){ // arr de vues ; renvoie le HTML selon le mode de tri
+ if(!arr.length)return'';
+ const cmp=(a,b)=>byName(a,b);
+ if(sortMode==='alpha'){const a=arr.slice().sort((x,y)=>(doneLast?(!!x.item.done-!!y.item.done):0)||cmp(x,y));return`<div class="grid">${a.map(render).join('')}</div>`}
+ const live=doneLast?arr.filter(v=>!v.item.done):arr,done=doneLast?arr.filter(v=>v.item.done):[];let h='';
+ const grp=(title,list)=>{if(list.length)h+=`<h3 class="gh">${esc(title)}</h3><div class="grid">${list.sort(cmp).map(render).join('')}</div>`};
+ for(const a of aisles())grp(a.name,live.filter(v=>v.aisle===a.id));
+ grp(aisles().length?'Sans rayon':'Articles',live.filter(v=>!v.aisle));
+ grp('Pris ✔',done);return h}
+function renderShop(){
+ const q=norm($('#q').value),L=items().map(vw);
+ $('#sort').textContent=sortMode==='alpha'?'Tri : A→Z':'Tri : rayons';
+ $('#store').textContent=store?'🛒 Magasin : oui':'🛒 Magasin';$('#store').className=store?'pri':'';
+ $('#list').innerHTML=L.length?grouped(L,v=>tileBtn(v),true):'<p class="empty">Liste vide. Touche une tuile ci-dessous ou tape un nom plus haut.</p>';
+ const nDone=L.filter(v=>v.item.done).length;
+ $('#finish').hidden=!(store&&nDone);$('#finish').textContent=`Terminer : retirer les ${nDone} article(s) pris`;
+ const used=new Set(items().map(i=>i.tid).filter(Boolean));
+ const P=tiles().filter(t=>!used.has(t.id)&&(!q||norm(t.name).includes(q))).map(t=>({id:t.id,name:t.name,emo:t.emo,pic:t.pic,aisle:aisleOk(t.aisle),tile:t,item:null}));
+ $('#pool').innerHTML=P.length?grouped(P,v=>tileBtn(v)):`<p class="empty">${q?'Aucune tuile ne correspond.':tiles().length?'Toutes les tuiles sont dans la liste.':'Aucune tuile : crée-en dans l’onglet Gestion ou avec le champ de recherche.'}</p>`;
+ $('#qact').hidden=!$('#q').value.trim();hydrate($('#v-shop'))}
+function renderManage(){const A=aisles(),T=tiles().sort(byName),an=id=>{const a=A.find(x=>x.id===id);return a?a.name:'Sans rayon'};
+ let h=`<div class="bar"><button class="pri" id="m-new">+ Nouvelle tuile</button></div><h2>Tuiles (${T.length})</h2>`;
+ h+=T.length?T.map(t=>`<div class="row" data-t="${t.id}"><span class="th">${visual({id:t.id,pic:t.pic,emo:t.emo})}</span><span class="nm">${esc(t.name)}<small>${esc(an(t.aisle))}</small></span><button data-a="edit">✎</button></div>`).join(''):'<p class="empty">Aucune tuile.</p>';
+ h+=`<div class="sec"><h2>Rayons</h2></div>`;
+ h+=A.length?A.map((a,i)=>`<div class="row" data-r="${a.id}"><span class="nm">${esc(a.name)}</span><button data-a="up"${i?'':' disabled'}>▲</button><button data-a="down"${i<A.length-1?'':' disabled'}>▼</button><button data-a="ren">✎</button><button data-a="del" class="bad">🗑</button></div>`).join(''):'<p class="empty">Aucun rayon.</p>';
+ h+=`<div class="bar"><button id="r-new">+ Ajouter un rayon</button>${A.length?'':'<button id="r-seed">Rayons classiques</button>'}</div>`;
+ $('#v-manage').innerHTML=h;hydrate($('#v-manage'))}
+function render(){if(view==='shop')renderShop();else if(view==='manage')renderManage()}
+function showView(v){view=v;for(const s of['shop','manage','cfg'])$('#v-'+s).hidden=s!==v;
+ $('#tabs').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.t===v));$('#tabs').hidden=v==='cfg';render()}
+$('#tabs').onclick=e=>{const b=e.target.closest('button');if(b)showView(b.dataset.t)};
+
+/* ---- Courses : interactions ---- */
+let lpT=null,lpFired=false;const lpStop=()=>clearTimeout(lpT);
+$('#list').addEventListener('pointerdown',e=>{const t=e.target.closest('.tile');if(!t)return;lpFired=false;lpStop();lpT=setTimeout(()=>{lpFired=true;navigator.vibrate&&navigator.vibrate(10);itemDlg(t.dataset.id)},500)});
+['pointerup','pointerleave','pointercancel'].forEach(ev=>$('#list').addEventListener(ev,lpStop));
+$('#list').addEventListener('contextmenu',e=>{const t=e.target.closest('.tile');if(t){e.preventDefault();lpStop();lpFired=true;itemDlg(t.dataset.id)}});
+$('#list').addEventListener('click',e=>{const t=e.target.closest('.tile');if(!t)return;if(lpFired){lpFired=false;return}
+ const i=S.list.items.find(x=>x.id===t.dataset.id);if(!i)return;
+ if(store)setItem(i.id,{done:!i.done});else removeItem(i.id)});
+$('#pool').addEventListener('click',e=>{const t=e.target.closest('.tile');if(!t)return;const tl=tileOf(t.dataset.id);if(tl)addTile(tl)});
+$('#sort').onclick=()=>{sortMode=sortMode==='alpha'?'aisle':'alpha';ls.set('sort',sortMode);render()};
+$('#store').onclick=()=>{store=!store;ls.set('store',store?'1':'0');render()};
+$('#finish').onclick=()=>{const prev=snap(),t=now();let n=0;for(const i of S.list.items)if(!i.d&&i.done){i.d=true;i.u=t;n++}touch('list');render();toast(n+' article(s) retiré(s)',()=>restore(prev))};
+$('#q').addEventListener('input',renderShop);
+$('#q').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('#q-add').click()}});
+$('#q-add').onclick=()=>{const v=$('#q').value;addFree(v);$('#q').value='';renderShop()};
+$('#q-new').onclick=()=>{const v=$('#q').value.trim();$('#q').value='';renderShop();openEditor({name:v,addToList:true})};
+function itemDlg(id){const i=S.list.items.find(x=>x.id===id&&!x.d);if(!i)return;
+ const draw=()=>{const i2=S.list.items.find(x=>x.id===id&&!x.d);if(!i2)return closeModal();const v=vw(i2);
+  modal(`<div class="pv"><span>${visual(v)}</span><h2>${esc(v.name)}</h2></div><div class="stp"><button data-a="m">−</button><b>${i2.qty||1}</b><button data-a="p">+</button></div>
+  <div class="bar">${v.tile?'':'<button data-a="mk">Créer la tuile</button>'}<button class="bad" data-a="rm">Retirer</button></div><div class="bar"><button data-a="x">Fermer</button></div>`,
+  a=>{if(a==='m')setItem(id,{qty:Math.max(1,(i2.qty||1)-1)});else if(a==='p')setItem(id,{qty:(i2.qty||1)+1});
+   else if(a==='rm'){closeModal();removeItem(id)}else if(a==='mk'){closeModal();openEditor({name:i2.name,linkItem:id});return}else return closeModal();draw()});hydrate($('#modal'))};
+ draw()}
+
+/* ---- Éditeur de tuile ---- */
+let ed=null;
+function openEditor(init){const t=init.id&&tileOf(init.id)||{};
+ ed={id:t.id||null,name:t.name||init.name||'',emo:t.emo||'',aisle:aisleOk(t.aisle),pic:t.pic||0,blob:null,blobUrl:null,auto:!t.id||(!t.emo&&!t.pic),panel:'',linkItem:init.linkItem||null,addToList:!!init.addToList};
+ const opts=()=>aisles().map(a=>`<option value="${a.id}"${a.id===ed.aisle?' selected':''}>${esc(a.name)}</option>`).join('');
+ modal(`<div class="pv"><span id="ed-prev"></span><h2>${ed.id?'Modifier la tuile':'Nouvelle tuile'}</h2></div>
+ <label for="ed-name">Nom</label><input id="ed-name" value="${esc(ed.name)}" autocomplete="off">
+ <label for="ed-aisle">Rayon</label><select id="ed-aisle"><option value="">Sans rayon</option>${opts()}<option value="__new">➕ Nouveau rayon…</option></select>
+ <label>Image</label><div class="bar" style="margin-top:0"><button data-a="pe">😀 Emoji</button><button data-a="pf">📷 Fichier</button><button data-a="ps">🔎 Photos</button></div>
+ <input id="ed-file" type="file" accept="image/*" hidden><div id="ed-panel"></div>
+ <div class="bar"><button data-a="x">Annuler</button><button class="pri" data-a="ok">Enregistrer</button></div>${ed.id?'<div class="bar"><button class="bad" data-a="del">Supprimer la tuile</button></div>':''}`,edAct);
+ $('#ed-name').oninput=e=>{ed.name=e.target.value;if(ed.auto&&!ed.blob&&!ed.pic)ed.emo=guess(ed.name);edPrev()};
+ $('#ed-aisle').onchange=e=>{if(e.target.value==='__new'){const n=(prompt('Nom du nouveau rayon')||'').trim();if(n){const id=addAisle(n);const o=document.createElement('option');o.value=id;o.textContent=n;e.target.insertBefore(o,e.target.lastElementChild);e.target.value=id;ed.aisle=id}else e.target.value=ed.aisle||''}else ed.aisle=e.target.value};
+ $('#ed-file').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{setBlob(await toJpeg(URL.createObjectURL(f),true))}catch(x){toast(errMsg(x))}};
+ edPrev();if(!ed.name)$('#ed-name').focus()}
+function setBlob(b){ed.blob=b;ed.blobUrl=URL.createObjectURL(b);ed.pic=0;ed.auto=false;edPrev()}
+function edPrev(){const el=$('#ed-prev');if(!el)return;
+ el.innerHTML=ed.blob?`<span class="pv"><img src="${ed.blobUrl}" style="width:56px;height:56px"></span>`:ed.pic?`<span class="pv"><img data-k="${ed.id}-${ed.pic}" alt=""></span>`:`<span class="em" style="font-size:48px;line-height:56px">${ed.emo||guess(ed.name)||'🛒'}</span>`;hydrate(el)}
+function edAct(a,b){
+ if(a==='x')return closeModal();
+ if(a==='pe'){$('#ed-panel').innerHTML=`<div class="egrid">${EMOJIS.map(e=>`<button data-a="e" data-e="${e}">${e}</button>`).join('')}</div><label for="ed-oe">Autre emoji</label><input id="ed-oe" placeholder="Colle ou tape un emoji">`;
+  $('#ed-oe').oninput=e=>{const g=[...new Intl.Segmenter().segment(e.target.value)][0];if(g)pickEmo(g.segment)}}
+ else if(a==='e')pickEmo(b.dataset.e);
+ else if(a==='pf')$('#ed-file').click();
+ else if(a==='ps'){$('#ed-panel').innerHTML=`<div class="srow"><input id="ed-sq" value="${esc(ed.name)}"><button class="pri" data-a="go" style="flex:none">Chercher</button></div><div id="ed-res"></div>`;if(ed.name)photoSearch(ed.name)}
+ else if(a==='go')photoSearch($('#ed-sq').value);
+ else if(a==='img'){toast('Téléchargement…');fetch(b.dataset.u).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.blob()}).then(bl=>toJpeg(URL.createObjectURL(bl),false)).then(setBlob).then(()=>toast('Image choisie')).catch(e=>toast('Image inaccessible : '+errMsg(e)))}
+ else if(a==='ok')saveEditor();
+ else if(a==='del'){if(!confirm('Supprimer la tuile « '+ed.name+' » ?'))return;const t=tileOf(ed.id);if(t){t.d=true;t.u=now();touch('catalog')}closeModal();render()}}
+function pickEmo(e){ed.emo=e;ed.blob=null;ed.pic=0;ed.auto=false;edPrev()}
+async function photoSearch(term){term=term.trim();if(!term)return;const el=$('#ed-res');el.innerHTML='<p class="hint">Recherche…</p>';
+ const [o,w]=await Promise.allSettled([offSearch(term),wikiSearch(term)]);
+ const sec=(title,r)=>r.status!=='fulfilled'?`<p class="hint">${title} : indisponible</p>`:r.value.length?`<h3 class="gh">${title}</h3><div class="rgrid">${r.value.map(x=>`<button data-a="img" data-u="${esc(x.u)}"><img src="${esc(x.u)}" alt="" loading="lazy"><span>${esc(x.t.slice(0,24))}</span></button>`).join('')}</div>`:`<p class="hint">${title} : aucun résultat</p>`;
+ el.innerHTML=sec('Wikipédia',w)+sec('Open Food Facts',o)}
+async function saveEditor(){const name=ed.name.trim();if(!name)return toast('Le nom est obligatoire');
+ if(tiles().some(t=>norm(t.name)===norm(name)&&t.id!==ed.id))return toast('Une tuile porte déjà ce nom');
+ const id=ed.id||uid();let pic=ed.pic;
+ if(ed.blob){try{toast('Envoi de l’image…');pic=now();await upload(id+'-'+pic,ed.blob)}catch(e){return toast('Image non envoyée : '+errMsg(e))}}
+ const emo=pic?'':(ed.emo||guess(name)||'🛒'),t=ed.id&&S.catalog.tiles.find(x=>x.id===ed.id);
+ if(t)Object.assign(t,{name,emo,pic,aisle:ed.aisle,u:now()});else S.catalog.tiles.push({id,name,emo,pic,aisle:ed.aisle,u:now()});
+ touch('catalog');
+ if(ed.linkItem){const i=S.list.items.find(x=>x.id===ed.linkItem);if(i){i.tid=id;i.name=name;i.u=now();touch('list')}}
+ else if(ed.addToList&&!t)addTile(tileOf(id),true);
+ closeModal();render()}
+
+/* ---- Gestion ---- */
+function addAisle(name){const o=Math.max(0,...aisles().map(a=>a.o||0))+1,id=uid();S.catalog.aisles.push({id,name,o,u:now()});touch('catalog');return id}
+$('#v-manage').addEventListener('click',e=>{
+ if(e.target.id==='m-new')return openEditor({});
+ if(e.target.id==='r-new'){const n=(prompt('Nom du rayon')||'').trim();if(n){addAisle(n);render()}return}
+ if(e.target.id==='r-seed'){['Fruits et légumes','Boucherie / Poissonnerie','Frais / Crèmerie','Boulangerie','Épicerie','Boissons','Surgelés','Hygiène / Entretien'].forEach(addAisle);render();return}
+ const row=e.target.closest('.row');if(!row)return;
+ if(row.dataset.t)return openEditor({id:row.dataset.t});
+ const A=aisles(),a=A.find(x=>x.id===row.dataset.r),act=e.target.closest('button')?.dataset.a;if(!a||!act)return;const t=now();
+ if(act==='ren'){const n=(prompt('Renommer le rayon',a.name)||'').trim();if(n){a.name=n;a.u=t;touch('catalog');render()}}
+ else if(act==='del'){if(confirm('Supprimer le rayon « '+a.name+' » ? Ses tuiles passeront en « Sans rayon ».')){a.d=true;a.u=t;touch('catalog');render()}}
+ else{const i=A.indexOf(a),j=act==='up'?i-1:i+1;if(j<0||j>=A.length)return;A.splice(j,0,A.splice(i,1)[0]);A.forEach((x,k)=>{if(x.o!==k+1){x.o=k+1;x.u=t}});touch('catalog');render()}});
+
+/* ---- Réglages & démarrage ---- */
+function fillCfg(){const c=cfg();['owner','repo','branch','token'].forEach(k=>$('#c-'+k).value=c[k]||'')}
+$('#gear').onclick=()=>{fillCfg();showView('cfg')};
+$('#c-back').onclick=()=>showView('shop');
+$('#c-save').onclick=()=>{const c={};['owner','repo','branch','token'].forEach(k=>c[k]=$('#c-'+k).value.trim());ls.set('cfg',JSON.stringify(c));M.catalog.etag=M.list.etag=null;showView('shop');syncAll(true)};
+$('#reload').onclick=()=>syncAll(true);
+if(!cfg().token){fillCfg();showView('cfg')}else{showView('shop');setSync();syncAll(true)}
+</script></body></html>
