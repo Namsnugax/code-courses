@@ -182,8 +182,17 @@ function toJpeg(src,cover,max=200){return new Promise((res,rej)=>{const im=new I
  if(cover)x.drawImage(im,(W-s)/2,(H-s)/2,s,s,0,0,d,d);else{const k=d/s;x.drawImage(im,(d-W*k)/2,(d-H*k)/2,W*k,H*k)}
  c.toBlob(b=>b?res(b):rej(new Error('encodage impossible')),'image/jpeg',.82)};
  im.onerror=()=>rej(new Error('image illisible'));im.src=src})}
-async function offSearch(t){const r=await fetch('https://fr.openfoodfacts.org/cgi/search.pl?search_terms='+encodeURIComponent(t)+'&search_simple=1&action=process&json=1&page_size=12&fields=product_name,image_front_small_url');
- const j=await r.json();return(j.products||[]).filter(p=>p.image_front_small_url).map(p=>({t:p.product_name||'',u:p.image_front_small_url}))}
+async function offSearch(t){
+ const pick=p=>p.image_small_url||p.image_front_small_url||p.image_url||p.image_front_url||'';
+ const name=p=>typeof p.product_name==='string'?p.product_name:(p.product_name&&(p.product_name.fr||p.product_name.main))||p.generic_name||'';
+ const map=l=>(l||[]).map(p=>({t:name(p),u:pick(p)})).filter(x=>x.u);
+ let err;
+ try{const r=await fetch('https://search.openfoodfacts.org/search?q='+encodeURIComponent(t)+'&page_size=12&langs=fr');
+  if(!r.ok)throw new Error('HTTP '+r.status);
+  const res=map((await r.json()).hits);if(res.length)return res}catch(e){err=e}
+ try{const r=await fetch('https://world.openfoodfacts.org/cgi/search.pl?search_terms='+encodeURIComponent(t)+'&search_simple=1&action=process&json=1&page_size=12&fields=product_name,image_front_small_url');
+  if(!r.ok)throw new Error('HTTP '+r.status);
+  return map((await r.json()).products)}catch(e){throw err||e}}
 async function wikiSearch(t){const r=await fetch('https://fr.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch='+encodeURIComponent(t)+'&gsrlimit=8&prop=pageimages&piprop=thumbnail&pithumbsize=300&format=json&origin=*');
  const j=await r.json();return Object.values(j.query?.pages||{}).filter(p=>p.thumbnail).sort((a,b)=>a.index-b.index).map(p=>({t:p.title,u:p.thumbnail.source}))}
 
@@ -301,7 +310,7 @@ function edAct(a,b){
 function pickEmo(e){ed.emo=e;ed.blob=null;ed.pic=0;ed.auto=false;edPrev()}
 async function photoSearch(term){term=term.trim();if(!term)return;const el=$('#ed-res');el.innerHTML='<p class="hint">Recherche…</p>';
  const [o,w]=await Promise.allSettled([offSearch(term),wikiSearch(term)]);
- const sec=(title,r)=>r.status!=='fulfilled'?`<p class="hint">${title} : indisponible</p>`:r.value.length?`<h3 class="gh">${title}</h3><div class="rgrid">${r.value.map(x=>`<button data-a="img" data-u="${esc(x.u)}"><img src="${esc(x.u)}" alt="" loading="lazy"><span>${esc(x.t.slice(0,24))}</span></button>`).join('')}</div>`:`<p class="hint">${title} : aucun résultat</p>`;
+ const sec=(title,r)=>r.status!=='fulfilled'?`<p class="hint">${title} : indisponible (${esc(errMsg(r.reason))})</p>`:r.value.length?`<h3 class="gh">${title}</h3><div class="rgrid">${r.value.map(x=>`<button data-a="img" data-u="${esc(x.u)}"><img src="${esc(x.u)}" alt="" loading="lazy"><span>${esc(x.t.slice(0,24))}</span></button>`).join('')}</div>`:`<p class="hint">${title} : aucun résultat</p>`;
  el.innerHTML=sec('Wikipédia',w)+sec('Open Food Facts',o)}
 async function saveEditor(){const name=ed.name.trim();if(!name)return toast('Le nom est obligatoire');
  if(tiles().some(t=>norm(t.name)===norm(name)&&t.id!==ed.id))return toast('Une tuile porte déjà ce nom');
